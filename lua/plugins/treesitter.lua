@@ -32,6 +32,8 @@ return {
                     "gitignore",
                     "astro",
                     "elixir",
+                    "eex",
+                    "heex"
                 },
                 auto_install = false,
             })
@@ -108,9 +110,9 @@ return {
                 scope = {
                     enabled = true,
                     highlight = {
+                        "RainbowBlockBlue",
                         "RainbowBlockRed",
                         "RainbowBlockYellow",
-                        "RainbowBlockBlue",
                         "RainbowBlockOrange",
                         "RainbowBlockGreen",
                         "RainbowBlockViolet",

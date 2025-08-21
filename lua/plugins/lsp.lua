@@ -62,9 +62,9 @@ return {
             signs = {
                 text = {
                     [vim.diagnostic.severity.ERROR] = '✘',
-                    [vim.diagnostic.severity.WARN] = '▲',
+                    [vim.diagnostic.severity.WARN] = '',
                     [vim.diagnostic.severity.HINT] = '⚑',
-                    [vim.diagnostic.severity.INFO] = '»',
+                    [vim.diagnostic.severity.INFO] = '',
                 },
             },
         })
@@ -107,6 +107,10 @@ return {
                 "eslint",
                 "elixirls",
                 "sqls",
+                "dockerls",                        -- Dockerfile
+                "docker_compose_language_service", -- Docker Compose
+                "yamlls",                          -- YAML
+                "tailwindcss"
             },
             handlers = {
                 -- this first function is the "default handler"
@@ -135,7 +139,6 @@ return {
                 -- This is the custom handler for elixirls
                 elixirls = function()
                     require('lspconfig').elixirls.setup({
-                        cmd = { "~/elixir-ls/language_server.sh" },
                         settings = {
                             elixirLS = {
                                 dialyzerEnabled = true,
@@ -144,8 +147,7 @@ return {
                             }
                         }
                     })
-                end,
-                --sql language server
+                end, --sql language server
                 sqls = function()
                     require('lspconfig').sqls.setup {
                         settings = {
@@ -161,6 +163,32 @@ return {
                     }
                 end
             },
+            dockerls = function()
+                require('lspconfig').dockerls.setup({})
+            end,
+
+            docker_compose_language_service = function()
+                require('lspconfig').docker_compose_language_service.setup({})
+            end,
+
+            yamlls = function()
+                require('lspconfig').yamlls.setup({
+                    settings = {
+                        yaml = {
+                            validate = true,
+                            hover = true,
+                            completion = true,
+                            schemaStore = { enable = true },
+                            schemas = {
+                                ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = {
+                                    "docker-compose*.yml",
+                                    "docker-compose*.yaml"
+                                }
+                            }
+                        }
+                    }
+                })
+            end,
         })
 
         local cmp = require('cmp')
