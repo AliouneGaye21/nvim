@@ -39,30 +39,40 @@ return {
                 telescope.extensions.project.project({
                     on_project_selected = function(prompt_bufnr)
                         local actions = require("telescope._extensions.project.actions")
-                        -- Cambia la working directory senza chiudere il picker
-                        actions.change_working_directory(prompt_bufnr, false)
+                        local ok = pcall(actions.change_working_directory, prompt_bufnr, false)
+                        if not ok then
+                            vim.notify("Nessun progetto selezionato", vim.log.levels.WARN)
+                        end
                     end
                 })
             end,
             desc = "Projects"
         },
-
         -- Git
-        { "<leader>gb", function() Snacks.picker.git_branches() end,        desc = "Git Branches" },
-        { "<leader>gl", function() Snacks.picker.git_log() end,             desc = "Git Log" },
-        { "<leader>gs", function() Snacks.picker.git_status() end,          desc = "Git Status" },
+        { "<leader>gb", function() Snacks.picker.git_branches() end,                               desc = "Git Branches" },
+        { "<leader>gl", function() Snacks.picker.git_log() end,                                    desc = "Git Log" },
+        { "<leader>gs", function() Snacks.picker.git_status() end,                                 desc = "Git Status" },
 
         -- LSP
-        { "gd",         function() Snacks.picker.lsp_definitions() end,     desc = "Goto Definition" },
-        { "gr",         function() Snacks.picker.lsp_references() end,      desc = "Goto References" },
-        { "gI",         function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation" },
-        { "<leader>ss", function() Snacks.picker.lsp_symbols() end,         desc = "LSP Symbols" },
+        { "gd",         function() Snacks.picker.lsp_definitions() end,                            desc = "Goto Definition" },
+        { "gr",         function() Snacks.picker.lsp_references() end,                             desc = "Goto References" },
+        { "gI",         function() Snacks.picker.lsp_implementations() end,                        desc = "Goto Implementation" },
+        { "<leader>ss", function() Snacks.picker.lsp_symbols() end,                                desc = "LSP Symbols" },
 
         -- Other
-        { "<leader>z",  function() Snacks.zen() end,                        desc = "Toggle Zen Mode" },
-        { "<leader>Z",  function() Snacks.zen.zoom() end,                   desc = "Toggle Zoom" },
-        { "<leader>.",  function() Snacks.scratch() end,                    desc = "Toggle Scratch Buffer" },
-        { "<leader>d",  "<cmd>lua require('snacks.dashboard').open()<cr>",  desc = "Open Dashboard" },
+        { "<leader>z",  function() Snacks.zen() end,                                               desc = "Toggle Zen Mode" },
+        { "<leader>Z",  function() Snacks.zen.zoom() end,                                          desc = "Toggle Zoom" },
+        { "<leader>.",  function() Snacks.scratch() end,                                           desc = "Toggle Scratch Buffer" },
+        { "<leader>;",  "<cmd>lua require('snacks.dashboard').open()<cr>",                         desc = "Open Dashboard" },
+
+
+        --terminal
+
+        { "<leader>tt", function() require("snacks").terminal.toggle() end,                        desc = "Toggle Terminal" },
+        { "<leader>tf", function() require("snacks").terminal.open(nil, { layout = "float" }) end, desc = "Terminal Float" },
+        { "<leader>ts", function() require("snacks").terminal.open(nil, { split = true }) end,     desc = "Terminal Split" },
+
+
     },
     init = function()
         vim.api.nvim_create_autocmd("User", {
