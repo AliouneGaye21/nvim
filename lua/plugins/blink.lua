@@ -1,55 +1,93 @@
 -- lua/plugins/blink.lua
 return {
-  'saghen/blink.cmp',
-  -- optional: provides snippets for the snippet source
-  dependencies = { 'rafamadriz/friendly-snippets' },
+    'saghen/blink.cmp',
+    -- 'dependencies' assicura che questi plugin vengano caricati prima o insieme a blink.cmp
+    dependencies = {
+        'rafamadriz/friendly-snippets',
+        'giuxtaposition/blink-cmp-copilot', -- Il "ponte" per integrare Copilot
+        'zbirenbaum/copilot.lua',           -- È buona norma dichiarare la dipendenza esplicita
+    },
+    version = '1.*',
 
-  -- use a release tag to download pre-built binaries
-  version = '1.*',
-  -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-  -- build = 'cargo build --release',
-  -- If you use nix, you can build from source using latest nightly rust with:
-  -- build = 'nix run .#build-plugin',
+    ---@module 'blink.cmp'
+    ---@type blink.cmp.Config
+    opts = {
+        keymap = {
+            preset = 'super-tab',
+        },
 
-  ---@module 'blink.cmp'
-  ---@type blink.cmp.Config
-  opts = {
-    -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
-    -- 'super-tab' for mappings similar to vscode (tab to accept)
-    -- 'enter' for enter to accept
-    -- 'none' for no mappings
-    --
-    -- All presets have the following mappings:
-    -- C-space: Open menu or open docs if already open
-    -- C-n/C-p or Up/Down: Select next/previous item
-    -- C-e: Hide menu
-    -- C-k: Toggle signature help (if signature.enabled = true)
-    --
-    -- See :h blink-cmp-config-keymap for defining your own keymap
-    keymap = { preset = 'super-tab' },
 
-    appearance = {
-      -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-      -- Adjusts spacing to ensure icons are aligned
-      nerd_font_variant = 'mono'
+        appearance = {
+            nerd_font_variant = 'mono',
+            kind_icons = {
+                Copilot = "",
+                Text = '󰉿',
+                Method = '󰊕',
+                Function = '󰊕',
+                Constructor = '󰒓',
+                Field = '󰜢',
+                Variable = '󰆦',
+                Property = '󰖷',
+                Class = '󱡠',
+                Interface = '󱡠',
+                Struct = '󱡠',
+                Module = '󰅩',
+                Unit = '󰪚',
+                Value = '󰦨',
+                Enum = '󰦨',
+                EnumMember = '󰦨',
+                Keyword = '󰻾',
+                Constant = '󰏿',
+                Snippet = '󱄽',
+                Color = '󰏘',
+                File = '󰈔',
+                Reference = '󰬲',
+                Folder = '󰉋',
+                Event = '󱐋',
+                Operator = '󰪚',
+                TypeParameter = '󰬛',
+            },
+        },
+
+        completion = {
+            documentation = { auto_show = false }
+        },
+
+        sources = {
+            -- Aggiungi 'copilot' all'elenco delle fonti. L'ordine è importante!
+            -- Mettilo dopo 'lsp' e 'snippets' ma prima di altri per una buona priorità.
+            default = { 'lsp', 'snippets', 'copilot', 'path', 'buffer' },
+            providers = {
+                -- Qui configuri come 'blink.cmp' deve trattare la fonte 'copilot'
+                copilot = {
+                    name = "copilot",
+                    module = "blink-cmp-copilot", -- Specifica il plugin bridge
+                    -- score_offset = 90,            -- Dagli una priorità alta per farlo apparire prima
+                    async = true,
+                    -- Questa funzione è fondamentale per assegnare l'icona e il tipo "Copilot"
+                    transform_items = function(_, items)
+                        local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
+                        local kind_idx = #CompletionItemKind + 1
+                        CompletionItemKind[kind_idx] = "Copilot"
+                        for _, item in ipairs(items) do
+                            item.kind = kind_idx
+                        end
+                        return items
+                    end,
+                },
+            },
+        },
+
+        fuzzy = { implementation = "prefer_rust_with_warning" }
     },
 
-    -- (Default) Only show the documentation popup when manually triggered
-    completion = { documentation = { auto_show = true
-        } },
+    opts_extend = { "sources.default" },
 
-    -- Default list of enabled providers defined so that you can extend it
-    -- elsewhere in your config, without redefining it, due to `opts_extend`
-    sources = {
-      default = { 'lsp', 'path', 'snippets', 'buffer' },
-    },
+    config = function(_, opts)
+        require("blink.cmp").setup(opts)
 
-    -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
-    -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
-    -- when the Rust fuzzy matcher is not available, by using `implementation = "prefer_rust"`
-    --
-    -- See the fuzzy documentation for more information
-    fuzzy = { implementation = "prefer_rust_with_warning" }
-  },
-  opts_extend = { "sources.default" }
+        vim.keymap.set("i", "<leader>cp", require("blink.cmp").show, {
+            desc = "Blink: Mostra suggerimenti",
+        })
+    end
 }
