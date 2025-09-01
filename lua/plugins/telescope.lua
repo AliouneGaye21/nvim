@@ -12,7 +12,7 @@ return {
                 project = {
                     base_dirs = {
                         { "~/elixir/",  max_depth = 3 }, -- directory principale con profondità massima di 3
-                        { "~/astarte/", max_depth = 2 }, -- un'altra directory
+                        -- { "~/astarte/", max_depth = 2 }, -- un'altra directory
                     },
                     hidden_files = false,                -- mostra anche i file nascosti nei progetti
                     theme = "dropdown",
