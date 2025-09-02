@@ -4,5 +4,6 @@ return {
     --     name = "plenary"
     -- },
     { import = "plugins.snacks" },
+    { import = "plugins.blink" },
 
 }
