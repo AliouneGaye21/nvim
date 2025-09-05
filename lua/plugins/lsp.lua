@@ -50,11 +50,12 @@ return {
                 "ts_ls",
                 "eslint",
                 "elixirls",
-                "sqls",
+                "sqlls",
                 "dockerls",
                 "docker_compose_language_service",
                 "yamlls",
                 "tailwindcss",
+                "lexical"
             },
             handlers = {
                 -- default handler: passa le capabilities a tutti
@@ -80,13 +81,13 @@ return {
                 elixirls = function()
                     lspconfig.elixirls.setup({
                         capabilities = capabilities,
-                        settings = {
-                            elixirLS = {
-                                dialyzerEnabled = true,
-                                fetchDeps = false,
-                                enableTestLenses = false,
-                            }
-                        }
+                        -- settings = {
+                        --     elixirLS = {
+                        --         dialyzerEnabled = true,
+                        --         fetchDeps = false,
+                        --         enableTestLenses = false,
+                        --     }
+                        -- }
                     })
                 end,
                 -- sql custom config

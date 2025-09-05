@@ -60,11 +60,12 @@ return {
         completion = {
             documentation = {
                 auto_show = true, -- Abilita la finestra di documentazione
-                win_options = {
-                    -- Opzioni per la finestra popup, per un look più moderno
-                    border = "rounded",
-                    winhighlight = "Normal:Pmenu,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
-                }
+                -- window = {
+                --     -- documentation = {
+                --     border = "rounded",
+                --     winhighlight = "Normal:Pmenu,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+                --     -- },
+                -- },
             }
         },
 
@@ -74,22 +75,22 @@ return {
             default = { 'lsp', 'snippets', 'copilot', 'path', 'buffer' },
             providers = {
                 lsp = {
-                    priority = 100, -- Massima priorità ai suggerimenti del Language Server
+                    score_offset = 100, -- Massima priorità ai suggerimenti del Language Server
                 },
                 snippets = {
-                    priority = 90, -- Subito dopo vengono gli snippets
+                    score_offset = 90, -- Subito dopo vengono gli snippets
                 },
                 buffer = {
-                    priority = 50, -- I suggerimenti dal buffer hanno una priorità molto più bassa
+                    score_offset = 50, -- I suggerimenti dal buffer hanno una priorità molto più bassa
                 },
                 path = {
-                    priority = 70, -- I percorsi sono più importanti del buffer ma meno di altro
+                    score_offset = 70, -- I percorsi sono più importanti del buffer ma meno di altro
                 },
                 -- Qui configuri come 'blink.cmp' deve trattare la fonte 'copilot'
                 copilot = {
                     name = "copilot",
                     module = "blink-cmp-copilot", -- Specifica il plugin bridge
-                    priority = 80,                -- Dagli una priorità alta per farlo apparire prima
+                    score_offset = 80,            -- Dagli una priorità alta per farlo apparire prima
                     async = true,
                     -- Questa funzione è fondamentale per assegnare l'icona e il tipo "Copilot"
                     transform_items = function(_, items)
